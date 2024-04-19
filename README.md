@@ -1,83 +1,8 @@
-# wxappUnpacker
-
-这是著名微信小程序反编译脚本项目，我不是原作者，我只是该项目的搬运工，用于自己的项目中，同时修复了因微信升级导致该脚本运行报错的BUG。上传该项目的初衷就是有两个：
-1. 原项目已被作者移除，估计是涉及到不可描述的社会问题；
-2. 备份一份项目，供大家使用，也是给自己一份保障
-
-## 使用方法
-1. 第一步
-```
-npm install
-```
-
-2. 第二步
-```
-node wuWxapkg.js <wx_mini_progranm_file_path>
-```
-之后会在你运行JS脚本的同级目录生成跟.wxapkg同名的目录，解压后的源码就在该目录下面
-
-## 常见问题
-```
-1. Module build failed: Error: Cannot find module 'escodegen'（本项目已经修复该问题）
-```
-#### 解决方法：
-```
-npm i escodegen -S
-```
-```
-2. Error: This Package is unrecognizable, please decrypted every type of file by hand.
-```
-#### 解决办法：虽然微信小程序的包后缀是.wxapkg，但有一些包的依赖后缀也是.wxapkg，真正的小程序包大小1M左右，而依赖包大小2、3M甚至更多。所以一股脑的反编译.wxapkg 类型的文件可能会报错，遇见这个问题的小伙伴请自知，你可能没找对包哦
-
-```
-3. _vd_version_info__ is not defined （本项目已经修复该问题）
-```
-#### 解决办法： 修改反编译目录下的wuWxss.js文件,修改RunVm方法为
-
-```
-function runVM(name,code){
-
-	let wxAppCode={},handle={cssFile:name};
-
-	let tsandbox = {
-
-		__vd_version_info__:"",
-
-		$gwx:GwxCfg.prototype["$gwx"],
-
-		__mainPageFrameReady__:GwxCfg.prototype["$gwx"],
-
-		__wxAppCode__:wxAppCode,
-
-		setCssToHead:cssRebuild.bind(handle)
-
-	}		
-
-	let vm = new VM({sandbox:tsandbox});
-
-	vm.run(code);
-
-	for(let name in wxAppCode){
-
-		if(name.endsWith(".wxss")){
-
-			handle.cssFile = path.resolve(frameName,"..",name);
-
-			wxAppCode[name]();
-
-		}	
-
-	}
-
-}
-```
-
-## 环境配置 & 参考链接
-- https://blog.csdn.net/qq_41139830/article/details/80531802
-- https://www.cnblogs.com/wukong8/p/11612470.html
-- http://lrdcq.com/me/read.php/66.html
+# wxappUnpacker（wxss经xiaokar修复无报错版本）
 
 ![版本 0.3](https://img.shields.io/badge/版本-0.3-red.svg) ![支持的微信版本 >20180111](https://img.shields.io/badge/%E5%BE%AE%E4%BF%A1%E7%89%88%E6%9C%AC-%3E=20180111-brightgreen.svg) ![高级特性支持度 0](https://img.shields.io/badge/%E6%94%AF%E6%8C%81-0%25-yellow.svg)
+
+> Forked from https://github.com/qwerty472123/wxappUnpacker
 
 > Wechat App(微信小程序, .wxapkg)解包及相关文件(.wxss, .json, .wxs, .wxml)还原工具
 
